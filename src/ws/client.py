@@ -72,10 +72,11 @@ class TradingWebsocketClient(BaseWebsocketClient):
 
         try:
             # Send the request
+            print("Request Payload: ", request_payload)
             await self.send(request_payload)
 
             # Wait for the listener to receive the matching response
-            response = await asyncio.wait_for(future, timeout=10)
+            response = await asyncio.wait_for(future, timeout=30)
             return response
         finally:
             # Clean up in case of timeout or other errors
