@@ -1,3 +1,3 @@
-def handle_tick_history(data, **kwargs):
+def handle_tick(data, **kwargs):
     print(kwargs)
     pass

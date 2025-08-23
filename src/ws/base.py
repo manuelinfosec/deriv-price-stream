@@ -14,6 +14,7 @@ class BaseWebsocketClient:
         self._uri = uri
         self._connection = None
         self._handler_dispatcher = None
+        
 
     async def connect(self):
         """Establishes the Websocket connection"""
@@ -48,7 +49,10 @@ class BaseWebsocketClient:
     async def send(self, message: dict):
         """Sends a JSON message to the server"""
         if self._connection:
+            print("Sending message")
             await self._connection.send(json.dumps(message))
+        else:
+            print("No connection")
             # print("Sent message", message)
 
     async def close(self):

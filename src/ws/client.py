@@ -22,7 +22,7 @@ class TradingWebsocketClient(BaseWebsocketClient):
         super().__init__(uri)
 
         # The 'dispatcher' maps topics to the functions that handle them
-        self._handlers = {"price_tick": handlers.handle_tick_history}
+        self._handlers = {"tick": handlers.handle_tick}
 
         # Set dispatcher for the base client to use
         self.set_handler_dispatcher(self._dispatch_message)
@@ -50,11 +50,16 @@ class TradingWebsocketClient(BaseWebsocketClient):
 
         # --- Part 2: Existing Logic for Event-Driven Handlers
         # If the message was not a direct reply, proceed to find a handler
+        
+        print("Data: ")
+        print(data)
         topic = data.get("msg_type")
         handler = self._handlers.get(topic)
 
+        # Create handler for 'error'
+
         if handler:
-            await handler(data, manager=self.price_manager)
+            handler(data, manager=self.price_manager)
 
         else:
             print(f"Warning: No handler for topic: '{topic}'")
@@ -81,3 +86,11 @@ class TradingWebsocketClient(BaseWebsocketClient):
         finally:
             # Clean up in case of timeout or other errors
             self._pending_requests.pop(request_id, None)
+
+    async def stream_tick(self, symbol):
+        payload = {
+            "ticks": symbol,
+            "subscribe": 1
+        }
+
+        await self.send(payload)
