@@ -51,8 +51,6 @@ class TradingWebsocketClient(BaseWebsocketClient):
         # --- Part 2: Existing Logic for Event-Driven Handlers
         # If the message was not a direct reply, proceed to find a handler
         
-        print("Data: ")
-        print(data)
         topic = data.get("msg_type")
         handler = self._handlers.get(topic)
 

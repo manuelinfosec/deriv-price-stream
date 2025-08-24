@@ -24,11 +24,13 @@ class PriceDataManager:
         # Convert the list of dictionaries directly into a DataFrame
         history_df = pd.DataFrame(historical_candles)
 
-        # Ensure the 'epoch' column is treated as a numeric type for sorting
-        history_df["epoch"] = pd.to_numeric(history_df["epoch"])
-        history_df = history_df.sort_values(by="epoch")
+        # Ensure the 'epoch' column is treated as a date type
+        history_df["epoch"] = pd.to_datetime(history_df["epoch"], unit='s')
+        # history_df = history_df.sort_values(by="epoch")
 
-        self.candles_df = history_df
+        # return only time and close
+        self.candles_df = history_df.loc[:, ["epoch", "close"]]
+
         print(
             f"\n📈 DataFrame initialized with {len(self.candles_df)} historical candles.")
 
@@ -36,6 +38,8 @@ class PriceDataManager:
         """Append a new live candle to the DataFrame"""
         # Convert the new candle dictionary to a DataFrame with one row
         new_row_df = pd.DataFrame([new_candle])
+
+        new_row_df["epoch"] = pd.to_datetime(new_row_df["epoch"], unit='s')        
 
         # Cancatenate the new row to the main DataFrame
         self.candles_df = pd.concat([self.candles_df, new_row_df],
@@ -48,6 +52,7 @@ class PriceDataManager:
             self.candles_df = self.candles_df.iloc[-max_length:]
 
         print("🕯️ New candle added.")
+        print(new_row_df)
 
     def get_dataframe(self):
         """
